@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+void splitDoublyLinkedList(struct Node* head, int position, struct Node** head1, struct Node** head2) {
+    if (head == NULL) {
+        *head1 = NULL;
+        *head2 = NULL;
+        return;
+    }
+
+    *head1 = head;  // First part starts with original head
+    *head2 = NULL;
+    int i = 1;
+    struct Node* ptr = head;
+
+    // Traverse to the split position
+    while (i != position && ptr->next != NULL) {
+        i++;
+        ptr = ptr->next;
+    }
+
+    // Perform the split
+    if (ptr->next != NULL) {
+        *head2 = ptr->next;       // Second part starts after split position
+        (*head2)->prev = NULL;    // New head's prev should be NULL
+        ptr->next = NULL;         // Sever the connection
+    }
+}
+
+struct Node* createDoublyLinkedList() {
+    struct Node *head = NULL, *temp = NULL, *current = NULL;
+    int n, value;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value for node %d: ", i + 1);
+        scanf("%d", &value);
+
+        temp = (struct Node*)malloc(sizeof(struct Node));
+        temp->data = value;
+        temp->prev = NULL;
+        temp->next = NULL;
+
+        if (head == NULL) {
+            head = temp;
+            current = temp;
+        } else {
+            current->next = temp;
+            temp->prev = current;
+            current = temp;
+        }
+    }
+    return head;
+}
+
+void printDoublyListForward(struct Node* head) {
+    struct Node* ptr = head;
+    printf("Forward: ");
+    while (ptr != NULL) {
+        printf("%d ", ptr->data);
+        ptr = ptr->next;
+    }
+    printf("\n");
+}
+
+void printDoublyListBackward(struct Node* head) {
+    if (head == NULL) return;
+    
+    struct Node* ptr = head;
+    while (ptr->next != NULL) {
+        ptr = ptr->next;
+    }
+
+    printf("Backward: ");
+    while (ptr != NULL) {
+        printf("%d ", ptr->data);
+        ptr = ptr->prev;
+    }
+    printf("\n");
+}
+
+void freeDoublyList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* head = createDoublyLinkedList();
+    struct Node* head1 = NULL;
+    struct Node* head2 = NULL;
+    int position;
+
+    printf("Original List:\n");
+    printDoublyListForward(head);
+    printDoublyListBackward(head);
+
+    printf("Enter split position: ");
+    scanf("%d", &position);
+
+    splitDoublyLinkedList(head, position, &head1, &head2);
+
+    printf("\nFirst Part:\n");
+    printDoublyListForward(head1);
+    printDoublyListBackward(head1);
+
+    printf("\nSecond Part:\n");
+    printDoublyListForward(head2);
+    printDoublyListBackward(head2);
+
+    freeDoublyList(head1);
+    freeDoublyList(head2);
+
+    return 0;
+}
