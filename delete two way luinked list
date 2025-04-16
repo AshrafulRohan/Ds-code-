@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+struct Node* deleteNode(struct Node* head, int position) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return NULL;
+    }
+
+    struct Node* toDelete = head;
+
+    if (position == 1) {
+        head = head->next;
+        if (head != NULL) {
+            head->prev = NULL;
+        }
+        free(toDelete);
+        return head;
+    }
+
+    for (int i = 1; i < position && toDelete != NULL; i++) {
+        toDelete = toDelete->next;
+    }
+
+    if (toDelete == NULL) {
+        printf("Position out of range\n");
+        return head;
+    }
+
+    toDelete->prev->next = toDelete->next;
+    if (toDelete->next != NULL) {
+        toDelete->next->prev = toDelete->prev;
+    }
+    free(toDelete);
+
+    return head;
+}
+
+struct Node* createDoublyList() {
+    struct Node *head = NULL, *temp = NULL, *current = NULL;
+    int n, value;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value for node %d: ", i + 1);
+        scanf("%d", &value);
+
+        temp = (struct Node*)malloc(sizeof(struct Node));
+        temp->data = value;
+        temp->prev = NULL;
+        temp->next = NULL;
+
+        if (head == NULL) {
+            head = temp;
+            current = temp;
+        } else {
+            current->next = temp;
+            temp->prev = current;
+            current = temp;
+        }
+    }
+    return head;
+}
+
+void printListForward(struct Node* head) {
+    struct Node* ptr = head;
+    printf("Forward: ");
+    while (ptr != NULL) {
+        printf("%d ", ptr->data);
+        ptr = ptr->next;
+    }
+    printf("\n");
+}
+
+void printListBackward(struct Node* head) {
+    if (head == NULL) return;
+    
+    struct Node* ptr = head;
+    while (ptr->next != NULL) {
+        ptr = ptr->next;
+    }
+
+    printf("Backward: ");
+    while (ptr != NULL) {
+        printf("%d ", ptr->data);
+        ptr = ptr->prev;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* head = createDoublyList();
+    printf("Original list:\n");
+    printListForward(head);
+    printListBackward(head);
+
+    int position;
+    printf("\nEnter position to delete: ");
+    scanf("%d", &position);
+
+    head = deleteNode(head, position);
+    printf("\nList after deletion:\n");
+    printListForward(head);
+    printListBackward(head);
+
+    freeList(head);
+    return 0;
+}
