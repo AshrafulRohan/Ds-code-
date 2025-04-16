@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void splitLinkedList(struct Node* head, int position, struct Node** head1, struct Node** head2) {
+    if (head == NULL) {
+        *head1 = NULL;
+        *head2 = NULL;
+        return;
+    }
+
+    *head1 = head;  // Step 1: Set Head1 = Head
+    *head2 = NULL;
+    int i = 1;
+    struct Node* ptr = head;
+
+    // Step 2: Traverse to the split position
+    while (i != position && ptr->next != NULL) {
+        i++;
+        ptr = ptr->next;
+    }
+
+    // Step 3: Perform the split
+    if (ptr->next != NULL) {
+        *head2 = ptr->next;
+        ptr->next = NULL;
+    }
+}
+
+struct Node* createLinkedList() {
+    struct Node *head = NULL, *temp = NULL, *current = NULL;
+    int n, value;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value for node %d: ", i + 1);
+        scanf("%d", &value);
+
+        temp = (struct Node*)malloc(sizeof(struct Node));
+        temp->data = value;
+        temp->next = NULL;
+
+        if (head == NULL) {
+            head = temp;
+            current = temp;
+        } else {
+            current->next = temp;
+            current = temp;
+        }
+    }
+    return head;
+}
+
+void printList(struct Node* head) {
+    struct Node* ptr = head;
+    while (ptr != NULL) {
+        printf("%d -> ", ptr->data);
+        ptr = ptr->next;
+    }
+    printf("NULL\n");
+}
+
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* head = createLinkedList();
+    struct Node* head1 = NULL;
+    struct Node* head2 = NULL;
+    int position;
+
+    printf("Original List: ");
+    printList(head);
+
+    printf("Enter split position: ");
+    scanf("%d", &position);
+
+    splitLinkedList(head, position, &head1, &head2);
+
+    printf("First Part: ");
+    printList(head1);
+
+    printf("Second Part: ");
+    printList(head2);
+
+    freeList(head1);
+    freeList(head2);
+
+    return 0;
+}
