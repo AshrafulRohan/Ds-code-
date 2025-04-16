@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+// Function to search for a value in a doubly linked list
+// Returns 1 if found, 0 if not found
+int searchDoublyLinkedList(struct Node* head, int searchValue) {
+    struct Node* ptr = head;  // Step 1: Set PTR = Head
+    int valueFound = 0;       // Value found = 0
+
+    // Step 2: Traverse the list
+    while (ptr != NULL && valueFound != 1) {
+        if (ptr->data == searchValue) {
+            valueFound = 1;
+        }
+        ptr = ptr->next;
+    }
+
+    // Step 3: Exit (return the result)
+    return valueFound;
+}
+
+// Function to create a doubly linked list (for testing)
+struct Node* createDoublyLinkedList() {
+    struct Node *head = NULL, *temp = NULL, *current = NULL;
+    int n, value;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value for node %d: ", i + 1);
+        scanf("%d", &value);
+
+        temp = (struct Node*)malloc(sizeof(struct Node));
+        temp->data = value;
+        temp->prev = NULL;
+        temp->next = NULL;
+
+        if (head == NULL) {
+            head = temp;
+            current = temp;
+        } else {
+            current->next = temp;
+            temp->prev = current;
+            current = temp;
+        }
+    }
+    return head;
+}
+
+// Function to print the list (forward)
+void printListForward(struct Node* head) {
+    struct Node* ptr = head;
+    printf("List (Forward): ");
+    while (ptr != NULL) {
+        printf("%d ", ptr->data);
+        ptr = ptr->next;
+    }
+    printf("\n");
+}
+
+// Function to print the list (backward)
+void printListBackward(struct Node* head) {
+    if (head == NULL) return;
+    
+    struct Node* ptr = head;
+    while (ptr->next != NULL) {
+        ptr = ptr->next;
+    }
+
+    printf("List (Backward): ");
+    while (ptr != NULL) {
+        printf("%d ", ptr->data);
+        ptr = ptr->prev;
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Node* head = createDoublyLinkedList();
+    int searchValue;
+
+    printListForward(head);
+    printListBackward(head);
+
+    printf("Enter value to search: ");
+    scanf("%d", &searchValue);
+
+    if (searchDoublyLinkedList(head, searchValue)) {
+        printf("Value %d found in the list.\n", searchValue);
+    } else {
+        printf("Value %d not found in the list.\n", searchValue);
+    }
+
+    // Free memory
+    while (head != NULL) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}
