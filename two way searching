@@ -7,13 +7,10 @@ struct Node {
     struct Node* next;
 };
 
-// Function to search for a value in a doubly linked list
-// Returns 1 if found, 0 if not found
 int searchDoublyLinkedList(struct Node* head, int searchValue) {
-    struct Node* ptr = head;  // Step 1: Set PTR = Head
-    int valueFound = 0;       // Value found = 0
+    struct Node* ptr = head;
+    int valueFound = 0;
 
-    // Step 2: Traverse the list
     while (ptr != NULL && valueFound != 1) {
         if (ptr->data == searchValue) {
             valueFound = 1;
@@ -21,11 +18,9 @@ int searchDoublyLinkedList(struct Node* head, int searchValue) {
         ptr = ptr->next;
     }
 
-    // Step 3: Exit (return the result)
     return valueFound;
 }
 
-// Function to create a doubly linked list (for testing)
 struct Node* createDoublyLinkedList() {
     struct Node *head = NULL, *temp = NULL, *current = NULL;
     int n, value;
@@ -54,7 +49,6 @@ struct Node* createDoublyLinkedList() {
     return head;
 }
 
-// Function to print the list (forward)
 void printListForward(struct Node* head) {
     struct Node* ptr = head;
     printf("List (Forward): ");
@@ -65,7 +59,6 @@ void printListForward(struct Node* head) {
     printf("\n");
 }
 
-// Function to print the list (backward)
 void printListBackward(struct Node* head) {
     if (head == NULL) return;
     
@@ -98,7 +91,6 @@ int main() {
         printf("Value %d not found in the list.\n", searchValue);
     }
 
-    // Free memory
     while (head != NULL) {
         struct Node* temp = head;
         head = head->next;
