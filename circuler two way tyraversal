@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+struct Node* createCircularDoublyLinkedList() {
+    struct Node *head = NULL, *temp = NULL, *current = NULL;
+    int n, value;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value for node %d: ", i + 1);
+        scanf("%d", &value);
+
+        temp = (struct Node*)malloc(sizeof(struct Node));
+        temp->data = value;
+        temp->prev = NULL;
+        temp->next = NULL;
+
+        if (head == NULL) {
+            head = temp;
+            current = temp;
+            head->next = head;  // Circular reference
+            head->prev = head;
+        } else {
+            current->next = temp;
+            temp->prev = current;
+            temp->next = head;  // New node's next points to head
+            head->prev = temp;   // Head's prev points to new node
+            current = temp;
+        }
+    }
+    return head;
+}
+
+void printCircularDoublyLinkedList(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* ptr = head;
+    printf("Circular List (Forward): ");
+    do {
+        printf("%d -> ", ptr->data);
+        ptr = ptr->next;
+    } while (ptr != head);
+    printf("(head)\n");
+
+    ptr = head->prev;
+    printf("Circular List (Backward): ");
+    do {
+        printf("%d -> ", ptr->data);
+        ptr = ptr->prev;
+    } while (ptr != head->prev);
+    printf("(tail)\n");
+}
+
+void freeCircularDoublyLinkedList(struct Node* head) {
+    if (head == NULL) return;
+
+    struct Node* current = head->next;
+    struct Node* nextNode;
+
+    while (current != head) {
+        nextNode = current->next;
+        free(current);
+        current = nextNode;
+    }
+    free(head);
+}
+
+int main() {
+    struct Node* head = createCircularDoublyLinkedList();
+    printCircularDoublyLinkedList(head);
+    freeCircularDoublyLinkedList(head);
+    return 0;
+}
