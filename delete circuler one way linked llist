@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* deleteNode(struct Node* head, int position) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return NULL;
+    }
+
+    struct Node* current = head;
+    struct Node* prev = NULL;
+
+    // Find the node to delete and its previous node
+    for (int i = 1; i < position && current->next != head; i++) {
+        prev = current;
+        current = current->next;
+    }
+
+    // Check if position is valid
+    if (position < 1 || (position > 1 && current->next == head)) {
+        printf("Invalid position\n");
+        return head;
+    }
+
+    // Case 1: Deleting the only node
+    if (current->next == head && prev == NULL) {
+        free(current);
+        return NULL;
+    }
+
+    // Case 2: Deleting the head node
+    if (current == head) {
+        struct Node* last = head;
+        while (last->next != head) {
+            last = last->next;
+        }
+        head = head->next;
+        last->next = head;
+        free(current);
+    }
+    // Case 3: Deleting a middle or last node
+    else {
+        prev->next = current->next;
+        free(current);
+    }
+
+    return head;
+}
+
+struct Node* createCircularList() {
+    struct Node *head = NULL, *temp = NULL, *current = NULL;
+    int n, value;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value for node %d: ", i + 1);
+        scanf("%d", &value);
+
+        temp = (struct Node*)malloc(sizeof(struct Node));
+        temp->data = value;
+        temp->next = NULL;
+
+        if (head == NULL) {
+            head = temp;
+            current = temp;
+            head->next = head;
+        } else {
+            current->next = temp;
+            current = temp;
+            current->next = head;
+        }
+    }
+    return head;
+}
+
+void printCircularList(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node* ptr = head;
+    printf("Circular List: ");
+    do {
+        printf("%d ", ptr->data);
+        ptr = ptr->next;
+    } while (ptr != head);
+    printf("\n");
+}
+
+void freeCircularList(struct Node* head) {
+    if (head == NULL) return;
+
+    struct Node* current = head->next;
+    struct Node* nextNode;
+
+    while (current != head) {
+        nextNode = current->next;
+        free(current);
+        current = nextNode;
+    }
+    free(head);
+}
+
+int main() {
+    struct Node* head = createCircularList();
+    printf("Original list: ");
+    printCircularList(head);
+
+    int position;
+    printf("\nEnter position to delete: ");
+    scanf("%d", &position);
+
+    head = deleteNode(head, position);
+    printf("List after deletion: ");
+    printCircularList(head);
+
+    freeCircularList(head);
+    return 0;
+}
