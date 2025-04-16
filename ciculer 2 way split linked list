@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+void splitCircularDoublyList(struct Node* head, int position, struct Node** head1, struct Node** head2) {
+    if (head == NULL) {
+        *head1 = NULL;
+        *head2 = NULL;
+        return;
+    }
+
+    struct Node* ptr = head;
+    int i = 1;
+    
+    // Traverse to the split position
+    while (i < position && ptr->next != head) {
+        ptr = ptr->next;
+        i++;
+    }
+
+    // Set the second head
+    *head2 = ptr->next;
+    
+    // Make first list circular
+    ptr->next = head;
+    head->prev = ptr;
+    
+    // Make second list circular
+    (*head2)->prev = head->prev;
+    head->prev->next = *head2;
+    
+    // Return original head as first head
+    *head1 = head;
+}
+
+struct Node* createCircularDoublyList() {
+    struct Node *head = NULL, *temp = NULL, *current = NULL;
+    int n, value;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value for node %d: ", i + 1);
+        scanf("%d", &value);
+
+        temp = (struct Node*)malloc(sizeof(struct Node));
+        temp->data = value;
+        temp->prev = NULL;
+        temp->next = NULL;
+
+        if (head == NULL) {
+            head = temp;
+            current = temp;
+            head->next = head;
+            head->prev = head;
+        } else {
+            current->next = temp;
+            temp->prev = current;
+            temp->next = head;
+            head->prev = temp;
+            current = temp;
+        }
+    }
+    return head;
+}
+
+void printCircularDoublyList(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node* ptr = head;
+    printf("Forward: ");
+    do {
+        printf("%d ", ptr->data);
+        ptr = ptr->next;
+    } while (ptr != head);
+    printf("\n");
+
+    ptr = head->prev;
+    printf("Backward: ");
+    do {
+        printf("%d ", ptr->data);
+        ptr = ptr->prev;
+    } while (ptr != head->prev);
+    printf("\n");
+}
+
+void freeCircularDoublyList(struct Node* head) {
+    if (head == NULL) return;
+
+    struct Node* current = head->next;
+    struct Node* nextNode;
+
+    while (current != head) {
+        nextNode = current->next;
+        free(current);
+        current = nextNode;
+    }
+    free(head);
+}
+
+int main() {
+    struct Node* head = createCircularDoublyList();
+    struct Node* head1 = NULL;
+    struct Node* head2 = NULL;
+    int position;
+
+    printf("Original List:\n");
+    printCircularDoublyList(head);
+
+    printf("Enter split position: ");
+    scanf("%d", &position);
+
+    splitCircularDoublyList(head, position, &head1, &head2);
+
+    printf("\nFirst Part:\n");
+    printCircularDoublyList(head1);
+
+    printf("\nSecond Part:\n");
+    printCircularDoublyList(head2);
+
+    freeCircularDoublyList(head1);
+    freeCircularDoublyList(head2);
+
+    return 0;
+}
