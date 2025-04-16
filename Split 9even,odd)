@@ -1,0 +1,44 @@
+#include <stdio.h>
+
+int main() {
+    int size;
+    
+    printf("Enter the size of the array: ");
+    scanf("%d", &size);
+    
+    int numbers[size];
+    int even[size], odd[size];
+    int evenCount = 0, oddCount = 0;
+
+    printf("Enter %d integers:\n", size);
+    for (int i = 0; i < size; i++) {
+        scanf("%d", &numbers[i]);
+    }
+
+    printf("\nOriginal Array: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", numbers[i]);
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (numbers[i] % 2 == 0) {
+            even[evenCount] = numbers[i];
+            evenCount++;
+        } else {
+            odd[oddCount] = numbers[i];
+            oddCount++;
+        }
+    }
+
+    printf("\n\nEven Numbers: ");
+    for (int i = 0; i < evenCount; i++) {
+        printf("%d ", even[i]);
+    }
+
+    printf("\nOdd Numbers: ");
+    for (int i = 0; i < oddCount; i++) {
+        printf("%d ", odd[i]);
+    }
+
+    return 0;
+}
