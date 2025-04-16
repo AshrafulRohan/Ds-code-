@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createCircularLinkedList() {
+    struct Node *head = NULL, *temp = NULL, *current = NULL;
+    int n, value;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value for node %d: ", i + 1);
+        scanf("%d", &value);
+
+        temp = (struct Node*)malloc(sizeof(struct Node));
+        temp->data = value;
+        temp->next = NULL;
+
+        if (head == NULL) {
+            head = temp;
+            current = temp;
+        } else {
+            current->next = temp;
+            current = temp;
+        }
+    }
+    
+    if (current != NULL) {
+        current->next = head;
+    }
+    
+    return head;
+}
+
+int searchCircularList(struct Node* head, int value) {
+    if (head == NULL) return 0;
+
+    struct Node* current = head;
+    
+    do {
+        if (current->data == value) {
+            return 1;
+        }
+        current = current->next;
+    } while (current != head);
+
+    return 0;
+}
+
+void printCircularLinkedList(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* ptr = head;
+    printf("Circular List: ");
+    do {
+        printf("%d -> ", ptr->data);
+        ptr = ptr->next;
+    } while (ptr != head);
+    printf("(head)\n");
+}
+
+void freeCircularLinkedList(struct Node* head) {
+    if (head == NULL) return;
+
+    struct Node* current = head->next;
+    struct Node* nextNode;
+
+    while (current != head) {
+        nextNode = current->next;
+        free(current);
+        current = nextNode;
+    }
+    free(head);
+}
+
+int main() {
+    struct Node* head = createCircularLinkedList();
+    printCircularLinkedList(head);
+
+    int searchValue;
+    printf("Enter value to search: ");
+    scanf("%d", &searchValue);
+
+    if (searchCircularList(head, searchValue)) {
+        printf("%d found in the list.\n", searchValue);
+    } else {
+        printf("%d not found in the list.\n", searchValue);
+    }
+
+    freeCircularLinkedList(head);
+    return 0;
+}
