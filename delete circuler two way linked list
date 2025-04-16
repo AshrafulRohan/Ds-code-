@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+struct Node* deleteNode(struct Node* head, int position) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return NULL;
+    }
+
+    struct Node* toDelete = head;
+
+    // Find the node to delete
+    for (int i = 1; i < position && toDelete->next != head; i++) {
+        toDelete = toDelete->next;
+    }
+
+    // Check if position is valid
+    if (position < 1 || (position > 1 && toDelete->next == head && toDelete != head)) {
+        printf("Invalid position\n");
+        return head;
+    }
+
+    // Case 1: Only one node
+    if (toDelete->next == head && toDelete->prev == head) {
+        free(toDelete);
+        return NULL;
+    }
+
+    // Case 2: Deleting head node
+    if (toDelete == head) {
+        head = head->next;
+        head->prev = toDelete->prev;
+        toDelete->prev->next = head;
+    }
+    // Case 3: Deleting middle or tail node
+    else {
+        toDelete->prev->next = toDelete->next;
+        toDelete->next->prev = toDelete->prev;
+    }
+
+    free(toDelete);
+    return head;
+}
+
+struct Node* createCircularDoublyList() {
+    struct Node *head = NULL, *temp = NULL, *current = NULL;
+    int n, value;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value for node %d: ", i + 1);
+        scanf("%d", &value);
+
+        temp = (struct Node*)malloc(sizeof(struct Node));
+        temp->data = value;
+        temp->prev = NULL;
+        temp->next = NULL;
+
+        if (head == NULL) {
+            head = temp;
+            current = temp;
+            head->next = head;
+            head->prev = head;
+        } else {
+            current->next = temp;
+            temp->prev = current;
+            temp->next = head;
+            head->prev = temp;
+            current = temp;
+        }
+    }
+    return head;
+}
+
+void printListForward(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node* ptr = head;
+    printf("Forward: ");
+    do {
+        printf("%d ", ptr->data);
+        ptr = ptr->next;
+    } while (ptr != head);
+    printf("\n");
+}
+
+void printListBackward(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+
+    struct Node* ptr = head->prev;
+    printf("Backward: ");
+    do {
+        printf("%d ", ptr->data);
+        ptr = ptr->prev;
+    } while (ptr != head->prev);
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    if (head == NULL) return;
+
+    struct Node* current = head->next;
+    struct Node* nextNode;
+
+    while (current != head) {
+        nextNode = current->next;
+        free(current);
+        current = nextNode;
+    }
+    free(head);
+}
+
+int main() {
+    struct Node* head = createCircularDoublyList();
+    printf("Original list:\n");
+    printListForward(head);
+    printListBackward(head);
+
+    int position;
+    printf("\nEnter position to delete: ");
+    scanf("%d", &position);
+
+    head = deleteNode(head, position);
+    printf("\nList after deletion:\n");
+    printListForward(head);
+    printListBackward(head);
+
+    freeList(head);
+    return 0;
+}
